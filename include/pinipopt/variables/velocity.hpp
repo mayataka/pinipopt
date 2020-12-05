@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_VELOCITY_HPP_
-#define IPOPT_PINO_VELOCITY_HPP_
+#ifndef PINIPOPT_VELOCITY_HPP_
+#define PINIPOPT_VELOCITY_HPP_
 
 #include <string>
 #include <cassert>
@@ -8,10 +8,10 @@
 #include "ifopt/composite.h"
 #include "ifopt/variable_set.h"
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 class Velocity : public ifopt::VariableSet {
 public:
@@ -29,6 +29,6 @@ private:
   Eigen::VectorXd v_;
 };
   
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#endif // IPOPT_PINO_VELOCITY_HPP_ 
+#endif // PINIPOPT_VELOCITY_HPP_ 

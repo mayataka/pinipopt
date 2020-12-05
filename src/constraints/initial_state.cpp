@@ -1,7 +1,7 @@
-#include "ipopt-pino/constraints/initial_state.hpp"
+#include "pinipopt/constraints/initial_state.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 InitialState::InitialState(const Robot& robot)
   : ConstraintSet(2*robot.dimv(), "initial_state"),
@@ -86,4 +86,9 @@ void InitialState::FillJacobianBlock(
   }
 }
 
-} // namespace ipoptpino
+
+void InitialState::InitVariableDependedQuantities(
+    const ifopt::Composite::Ptr& x_init) {
+}
+
+} // namespace pinipopt

@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_ROBOT_HPP_
-#define IPOPT_PINO_ROBOT_HPP_
+#ifndef PINIPOPT_ROBOT_HPP_
+#define PINIPOPT_ROBOT_HPP_
 
 #include <string>
 #include <vector>
@@ -10,10 +10,10 @@
 #include "pinocchio/container/aligned-vector.hpp"
 #include "pinocchio/spatial/force.hpp"
 
-#include "ipopt-pino/robot/floating_base.hpp"
+#include "pinipopt/robot/floating_base.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 ///
 /// @class Robot
@@ -329,8 +329,8 @@ private:
   int dimq_, dimv_, dimu_;
 };
 
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#include "ipopt-pino/robot/robot.hxx"
+#include "pinipopt/robot/robot.hxx"
 
-#endif // IPOPT_PINO_ROBOT_HPP_ 
+#endif // PINIPOPT_ROBOT_HPP_ 

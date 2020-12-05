@@ -1,7 +1,7 @@
-#include "ipopt-pino/cost/stage_cost.hpp"
+#include "pinipopt/cost/stage_cost.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 StageCost::StageCost(const Robot& robot, const double dtau, 
                      const int time_stage) 
@@ -73,16 +73,16 @@ void StageCost::setVariables() {
 
 void StageCost::updateCost() {
   cost_ = 0;
-  cost_ += 0.5 * (q_weight_.array() * (q_-q_ref_).array() * (q_-q_ref_).array()).sum();
-  cost_ += 0.5 * (v_weight_.array() * (v_-v_ref_).array() * (v_-v_ref_).array()).sum();
-  cost_ += 0.5 * (u_weight_.array() * (u_-u_ref_).array() * (u_-u_ref_).array()).sum();
+  cost_ += 0.5 * dtau_ * (q_weight_.array() * (q_-q_ref_).array() * (q_-q_ref_).array()).sum();
+  cost_ += 0.5 * dtau_ * (v_weight_.array() * (v_-v_ref_).array() * (v_-v_ref_).array()).sum();
+  cost_ += 0.5 * dtau_ * (u_weight_.array() * (u_-u_ref_).array() * (u_-u_ref_).array()).sum();
 }
 
 
 void StageCost::updateJacobian() {
-  lq_.array() = q_weight_.array() * (q_-q_ref_).array();
-  lv_.array() = v_weight_.array() * (v_-v_ref_).array();
-  lu_.array() = u_weight_.array() * (u_-u_ref_).array();
+  lq_.array() = dtau_ * q_weight_.array() * (q_-q_ref_).array();
+  lv_.array() = dtau_ * v_weight_.array() * (v_-v_ref_).array();
+  lu_.array() = dtau_ * u_weight_.array() * (u_-u_ref_).array();
 }
 
 
@@ -111,4 +111,4 @@ void StageCost::FillJacobianBlock(
   }
 }
 
-} // namespace ipoptpino
+} // namespace pinipopt

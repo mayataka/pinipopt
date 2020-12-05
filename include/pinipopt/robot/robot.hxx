@@ -1,7 +1,7 @@
-#ifndef IPOPT_PINO_ROBOT_HXX_
-#define IPOPT_PINO_ROBOT_HXX_
+#ifndef PINIPOPT_ROBOT_HXX_
+#define PINIPOPT_ROBOT_HXX_
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 #include "pinocchio/parsers/urdf.hpp"
 #include "pinocchio/algorithm/joint-configuration.hpp"
@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <assert.h>
 
-namespace ipoptpino {
+namespace pinipopt {
 
 inline Robot::Robot(const std::string& path_to_urdf)
   : model_(),
@@ -371,4 +371,4 @@ inline bool Robot::has_floating_base() const {
 
 } // namespace idocp
 
-#endif // IPOPT_PINO_ROBOT_HXX_ 
+#endif // PINIPOPT_ROBOT_HXX_ 

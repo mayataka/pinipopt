@@ -1,1 +1,1 @@
-#include "ipopt-pino/robot/floating_base.hpp"
+#include "pinipopt/robot/floating_base.hpp"

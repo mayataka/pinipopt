@@ -1,7 +1,7 @@
-#include "ipopt-pino/variables/torques.hpp"
+#include "pinipopt/variables/torques.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 Torques::Torques(const Robot& robot, const int time_stage) 
   : VariableSet(robot.dimu(), "u_"+std::to_string(time_stage)),
@@ -28,4 +28,4 @@ ifopt::Composite::VecBound Torques::GetBounds() const {
   return bounds;
 }
 
-} // namespace ipoptpino
+} // namespace pinipopt

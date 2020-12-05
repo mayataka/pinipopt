@@ -1,7 +1,7 @@
-#include "ipopt-pino/constraints/state_equation.hpp"
+#include "pinipopt/constraints/state_equation.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 StateEquation::StateEquation(const Robot& robot, const double dtau, 
                              const int time_stage)
@@ -107,4 +107,9 @@ void StateEquation::FillJacobianBlock(
   }
 }
 
-} // namespace ipoptpino
+
+void StateEquation::InitVariableDependedQuantities(
+    const ifopt::Composite::Ptr& x_init) {
+}
+
+} // namespace pinipopt

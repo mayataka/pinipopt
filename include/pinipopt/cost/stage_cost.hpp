@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_STAGE_COST_HPP_
-#define IPOPT_PINO_STAGE_COST_HPP_
+#ifndef PINIPOPT_STAGE_COST_HPP_
+#define PINIPOPT_STAGE_COST_HPP_
 
 #include <string>
 #include <memory>
@@ -7,10 +7,10 @@
 #include "Eigen/Core"
 #include "ifopt/cost_term.h"
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 class StageCost : public ifopt::CostTerm {
 public:
@@ -50,6 +50,6 @@ private:
 
 };
   
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#endif // IPOPT_PINO_STAGE_COST_HPP_ 
+#endif // PINIPOPT_STAGE_COST_HPP_ 

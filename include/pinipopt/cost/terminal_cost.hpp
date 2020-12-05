@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_TERMINAL_COST_HPP_
-#define IPOPT_PINO_TERMINAL_COST_HPP_
+#ifndef PINIPOPT_TERMINAL_COST_HPP_
+#define PINIPOPT_TERMINAL_COST_HPP_
 
 #include <string>
 #include <memory>
@@ -7,10 +7,10 @@
 #include "Eigen/Core"
 #include "ifopt/cost_term.h"
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 class TerminalCost : public ifopt::CostTerm {
 public:
@@ -38,11 +38,12 @@ public:
                          ifopt::Component::Jacobian& jac_block) const override;
 
 private:
+  double cost_;
   int N_, dimv_;
   std::string q_str_, v_str_;
   Eigen::VectorXd q_ref_, v_ref_, q_weight_, v_weight_, q_, v_, lq_, lv_;
 };
 
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#endif // IPOPT_PINO_TERMINAL_COST_HPP_ 
+#endif // PINIPOPT_TERMINAL_COST_HPP_ 

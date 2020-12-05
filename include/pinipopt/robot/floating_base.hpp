@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_FLOATING_BASE_HPP_
-#define IPOPT_PINO_FLOATING_BASE_HPP_
+#ifndef PINIPOPT_FLOATING_BASE_HPP_
+#define PINIPOPT_FLOATING_BASE_HPP_
 
 #include <vector>
 
@@ -7,7 +7,7 @@
 #include "pinocchio/multibody/model.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 ///
 /// @class FloatingBase
@@ -78,8 +78,8 @@ private:
   int dimv_, dim_passive_;
 };
 
-} // namespace ipoptpino 
+} // namespace pinipopt 
 
-#include "ipopt-pino/robot/floating_base.hxx"
+#include "pinipopt/robot/floating_base.hxx"
 
-#endif // IPOPT_PINO_FLOATING_BASE_HPP_ 
+#endif // PINIPOPT_FLOATING_BASE_HPP_ 

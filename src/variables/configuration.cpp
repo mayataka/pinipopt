@@ -1,7 +1,7 @@
-#include "ipopt-pino/variables/configuration.hpp"
+#include "pinipopt/variables/configuration.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 Configuration::Configuration(const Robot& robot, const int time_stage) 
   : VariableSet(robot.dimq(), "q_"+std::to_string(time_stage)),
@@ -28,4 +28,4 @@ ifopt::Composite::VecBound Configuration::GetBounds() const {
   return bounds;
 }
 
-} // namespace ipoptpino
+} // namespace pinipopt

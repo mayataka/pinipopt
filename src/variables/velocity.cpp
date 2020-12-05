@@ -1,7 +1,7 @@
-#include "ipopt-pino/variables/velocity.hpp"
+#include "pinipopt/variables/velocity.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 Velocity::Velocity(const Robot& robot, const int time_stage) 
   : VariableSet(robot.dimu(), "v_"+std::to_string(time_stage)),
@@ -28,4 +28,4 @@ ifopt::Composite::VecBound Velocity::GetBounds() const {
   return bounds;
 }
 
-} // namespace ipoptpino
+} // namespace pinipopt

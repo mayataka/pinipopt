@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_CONFIGURATION_HPP_
-#define IPOPT_PINO_CONFIGURATION_HPP_
+#ifndef PINIPOPT_CONFIGURATION_HPP_
+#define PINIPOPT_CONFIGURATION_HPP_
 
 #include <string>
 #include <cassert>
@@ -8,10 +8,10 @@
 #include "ifopt/composite.h"
 #include "ifopt/variable_set.h"
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
 class Configuration : public ifopt::VariableSet {
 public:
@@ -29,6 +29,6 @@ private:
   Eigen::VectorXd q_;
 };
   
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#endif // IPOPT_PINO_CONFIGURATION_HPP_
+#endif // PINIPOPT_CONFIGURATION_HPP_

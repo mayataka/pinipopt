@@ -1,5 +1,5 @@
-#ifndef IPOPT_PINO_STATE_EQUATION_HPP_
-#define IPOPT_PINO_STATE_EQUATION_HPP_
+#ifndef PINIPOPT_INITIAL_STATE_HPP_
+#define PINIPOPT_INITIAL_STATE_HPP_
 
 #include <string>
 #include <memory>
@@ -9,17 +9,21 @@
 #include "ifopt/composite.h"
 #include "ifopt/constraint_set.h"
 
-#include "ipopt-pino/robot/robot.hpp"
+#include "pinipopt/robot/robot.hpp"
 
 
-namespace ipoptpino {
+namespace pinipopt {
 
-class StateEquation : public ifopt::ConstraintSet {
+class InitialState : public ifopt::ConstraintSet {
 public:
   using Jacobian = Eigen::SparseMatrix<double, Eigen::RowMajor>;
 
-  StateEquation(const Robot& robot, const double dtau, const int time_stage);
-  virtual ~StateEquation() = default;
+  InitialState(const Robot& robot);
+  InitialState(const Robot& robot, const Eigen::VectorXd& q0, 
+               const Eigen::VectorXd& v0);
+  virtual ~InitialState() = default;
+
+  void setInitialState(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0);
 
   void setVariables();
 
@@ -36,17 +40,16 @@ public:
 
 private:
   Robot robot_;
-  double dtau_;
-  int time_stage_;
-  std::string q_str_, v_str_, u_str_, q_next_str_, v_next_str_;
-  Eigen::VectorXd q_, v_, u_, q_next_, v_next_, dq_, dv_, dx_;
-  Eigen::MatrixXd dFq_dq_, dFq_dv_, dABA_dq_, dABA_dv_, dABA_du_;
+  int dimv_;
+  std::string q_str_, v_str_;
+  Eigen::VectorXd q_, v_, q0_, v0_, dx_;
+  Eigen::MatrixXd dFq_dq_, dFq_dv_;
 
   void InitVariableDependedQuantities(
       const ifopt::Composite::Ptr& x_init) override;
 
 };
   
-} // namespace ipoptpino
+} // namespace pinipopt
 
-#endif // IPOPT_PINO_STATE_EQUATION_HPP_ 
+#endif // PINIPOPT_INITIAL_STATE_HPP_ 

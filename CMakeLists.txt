@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-project(ipopt-pino CXX)
+project(pinipopt CXX)
 set(CMAKE_CXX_STANDARD 11)
 
 ###########
@@ -15,21 +15,15 @@ find_package(Eigen3 REQUIRED)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 # find pinocchio
 find_package(pinocchio REQUIRED)
-# find OpenMP
-find_package(OpenMP REQUIRED)
-if(OpenMP_FOUND)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
 # find ifopt
-find_package(ifopt)
+find_package(ifopt REQUIRED)
 
-# build ipopt-pino
+# build pinipopt
 add_library(
   ${PROJECT_NAME} 
   SHARED
-  src/robot/robot.cpp
   src/robot/floating_base.cpp
+  src/robot/robot.cpp
   src/variables/configuration.cpp
   src/variables/velocity.cpp
   src/variables/torques.cpp
@@ -37,12 +31,13 @@ add_library(
   src/constraints/state_equation.cpp
   src/cost/stage_cost.cpp
   src/cost/terminal_cost.cpp
-  src/ocp_factory.cpp
+  src/ocp.cpp
 )
 target_link_libraries(
   ${PROJECT_NAME} 
   PUBLIC 
   ifopt::ifopt_ipopt
+  ifopt::ifopt_core
   pthread
   ${Boost_LIBRARIES}
   ${PINOCCHIO_LIBRARIES}
