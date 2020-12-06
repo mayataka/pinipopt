@@ -9,12 +9,37 @@ OCP::OCP(const Robot& robot, const double T, const int N)
     dtau_(T/N),
     N_(N) {
   createOCP(robot, N, dtau_);
+  ipopt_.SetOption("hessian_approximation", "limited-memory");
+  ipopt_.SetOption("limited_memory_update_type", "bfgs");
 }
 
 
 void OCP::solve(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0) {
-  initial_state_constraints_->setInitialState(q0, v0);
+  initial_state_constraint_->setInitialState(q0, v0);
   ipopt_.Solve(ocp_);
+}
+
+
+void OCP::set_q_weight(const Eigen::VectorXd& q_weight) {
+  for (auto& e : stage_costs_) {
+    e->set_q_weight(q_weight);
+  }
+  terminal_cost_->set_q_weight(q_weight);
+}
+
+
+void OCP::set_v_weight(const Eigen::VectorXd& v_weight) {
+  for (auto& e : stage_costs_) {
+    e->set_v_weight(v_weight);
+  }
+  terminal_cost_->set_v_weight(v_weight);
+}
+
+
+void OCP::set_u_weight(const Eigen::VectorXd& u_weight) {
+  for (auto& e : stage_costs_) {
+    e->set_u_weight(u_weight);
+  }
 }
 
 
@@ -64,8 +89,8 @@ void OCP::createVariableSets(const Robot& robot, const int N, const double dtau)
 
 void OCP::createConstraints(const Robot& robot, const int N, const double dtau) {
   constraints_.clear();
-  initial_state_constraints_ = std::make_shared<InitialState>(robot);
-  constraints_.push_back(initial_state_constraints_);
+  initial_state_constraint_ = std::make_shared<InitialState>(robot);
+  constraints_.push_back(initial_state_constraint_);
   for (int i=0; i<N; ++i) {
     constraints_.push_back(std::make_shared<StateEquation>(robot, dtau, i));
   }
@@ -73,11 +98,16 @@ void OCP::createConstraints(const Robot& robot, const int N, const double dtau) 
 
 
 void OCP::createCosts(const Robot& robot, const int N, const double dtau) {
-  costs_.clear();
+  stage_costs_.clear();
   for (int i=0; i<N; ++i) {
-    costs_.push_back(std::make_shared<StageCost>(robot, dtau, i));
+    stage_costs_.push_back(std::make_shared<StageCost>(robot, dtau, i));
   }
-  costs_.push_back(std::make_shared<TerminalCost>(robot, N));
+  terminal_cost_ = std::make_shared<TerminalCost>(robot, N);
+  costs_.clear();
+  for (auto e : stage_costs_) {
+    costs_.push_back(e);
+  }
+  costs_.push_back(terminal_cost_);
 }
 
 } // namespace pinipopt

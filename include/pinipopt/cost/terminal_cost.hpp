@@ -8,6 +8,8 @@
 #include "ifopt/cost_term.h"
 
 #include "pinipopt/robot/robot.hpp"
+#include "pinipopt/variables/configuration.hpp"
+#include "pinipopt/variables/velocity.hpp"
 
 
 namespace pinipopt {
@@ -26,22 +28,25 @@ public:
 
   void set_v_weight(const Eigen::VectorXd& v_weight);
 
-  void setVariables();
-
-  void updateCost();
-
-  void updateJacobian();
-
   double GetCost() const override;
 
   void FillJacobianBlock(std::string var_set, 
                          ifopt::Component::Jacobian& jac_block) const override;
 
 private:
-  double cost_;
   int N_, dimv_;
   std::string q_str_, v_str_;
-  Eigen::VectorXd q_ref_, v_ref_, q_weight_, v_weight_, q_, v_, lq_, lv_;
+  Eigen::VectorXd q_ref_, v_ref_, q_weight_, v_weight_;
+  mutable Eigen::VectorXd q_mutable_, v_mutable_, lq_mutable_, lv_mutable_;
+
+  void setVariables() const;
+
+  double computeCost() const;
+
+  void computeJacobian() const;
+
+  void InitVariableDependedQuantities(const VariablesPtr& x_init) override; 
+
 };
 
 } // namespace pinipopt

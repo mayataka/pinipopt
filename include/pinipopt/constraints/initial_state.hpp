@@ -25,8 +25,6 @@ public:
 
   void setInitialState(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0);
 
-  void setVariables();
-
   void updateConstraint();
 
   void updateJacobian();
@@ -42,8 +40,14 @@ private:
   Robot robot_;
   int dimv_;
   std::string q_str_, v_str_;
-  Eigen::VectorXd q_, v_, q0_, v0_, dx_;
-  Eigen::MatrixXd dFq_dq_, dFq_dv_;
+  Eigen::VectorXd q0_, v0_;
+  mutable Eigen::VectorXd q_mutable_, v_mutable_, dx_mutable_;
+
+  void setVariables() const;
+
+  void computeViolation() const;
+
+  void computeJacobian() const;
 
   void InitVariableDependedQuantities(
       const ifopt::Composite::Ptr& x_init) override;

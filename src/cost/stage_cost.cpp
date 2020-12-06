@@ -6,7 +6,6 @@ namespace pinipopt {
 StageCost::StageCost(const Robot& robot, const double dtau, 
                      const int time_stage) 
   : CostTerm("stage_cost_"+std::to_string(time_stage)),
-    cost_(0),
     dtau_(dtau),
     dimv_(robot.dimv()),
     dimu_(robot.dimu()),
@@ -19,12 +18,12 @@ StageCost::StageCost(const Robot& robot, const double dtau,
     q_weight_(Eigen::VectorXd::Zero(robot.dimv())),
     v_weight_(Eigen::VectorXd::Zero(robot.dimv())),
     u_weight_(Eigen::VectorXd::Zero(robot.dimu())),
-    q_(Eigen::VectorXd::Zero(robot.dimq())),
-    v_(Eigen::VectorXd::Zero(robot.dimv())),
-    u_(Eigen::VectorXd::Zero(robot.dimu())),
-    lq_(Eigen::VectorXd::Zero(robot.dimv())),
-    lv_(Eigen::VectorXd::Zero(robot.dimv())),
-    lu_(Eigen::VectorXd::Zero(robot.dimu())) {
+    q_mutable_(Eigen::VectorXd::Zero(robot.dimq())),
+    v_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
+    u_mutable_(Eigen::VectorXd::Zero(robot.dimu())),
+    lq_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
+    lv_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
+    lu_mutable_(Eigen::VectorXd::Zero(robot.dimu())) {
 }
 
 
@@ -64,51 +63,59 @@ void StageCost::set_u_weight(const Eigen::VectorXd& u_weight) {
 }
 
 
-void StageCost::setVariables() {
-  q_ = GetVariables()->GetComponent(q_str_)->GetValues();
-  v_ = GetVariables()->GetComponent(v_str_)->GetValues();
-  u_ = GetVariables()->GetComponent(u_str_)->GetValues();
-}
-
-
-void StageCost::updateCost() {
-  cost_ = 0;
-  cost_ += 0.5 * dtau_ * (q_weight_.array() * (q_-q_ref_).array() * (q_-q_ref_).array()).sum();
-  cost_ += 0.5 * dtau_ * (v_weight_.array() * (v_-v_ref_).array() * (v_-v_ref_).array()).sum();
-  cost_ += 0.5 * dtau_ * (u_weight_.array() * (u_-u_ref_).array() * (u_-u_ref_).array()).sum();
-}
-
-
-void StageCost::updateJacobian() {
-  lq_.array() = dtau_ * q_weight_.array() * (q_-q_ref_).array();
-  lv_.array() = dtau_ * v_weight_.array() * (v_-v_ref_).array();
-  lu_.array() = dtau_ * u_weight_.array() * (u_-u_ref_).array();
-}
-
-
 double StageCost::GetCost() const {
-  return cost_;
+  setVariables();
+  return computeCost();
 }
 
 
 void StageCost::FillJacobianBlock(
     std::string var_set, ifopt::Component::Jacobian& jac_block) const {
+  setVariables();
+  computeJacobian();
   if (var_set == q_str_) {
     for (int i=0; i<dimv_; ++i) {
-      jac_block.coeffRef(0, i) = lq_.coeff(i);
+      jac_block.coeffRef(0, i) = lq_mutable_.coeff(i);
     }
   }
   if (var_set == v_str_) {
     for (int i=0; i<dimv_; ++i) {
-      jac_block.coeffRef(0, dimv_+i) = lv_.coeff(i);
+      jac_block.coeffRef(0, i) = lv_mutable_.coeff(i);
     }
   }
   if (var_set == u_str_) {
     const int dimx = 2*dimv_;
     for (int i=0; i<dimu_; ++i) {
-      jac_block.coeffRef(0, dimx+i) = lu_.coeff(i);
+      jac_block.coeffRef(0, i) = lu_mutable_.coeff(i);
     }
   }
+}
+
+
+void StageCost::setVariables() const {
+  q_mutable_ = GetVariables()->GetComponent(q_str_)->GetValues();
+  v_mutable_ = GetVariables()->GetComponent(v_str_)->GetValues();
+  u_mutable_ = GetVariables()->GetComponent(u_str_)->GetValues();
+}
+
+
+double StageCost::computeCost() const {
+  double cost = 0;
+  cost += 0.5 * dtau_ * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
+  cost += 0.5 * dtau_ * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
+  cost += 0.5 * dtau_ * (u_weight_.array() * (u_mutable_-u_ref_).array() * (u_mutable_-u_ref_).array()).sum();
+  return cost;
+}
+
+
+void StageCost::computeJacobian() const {
+  lq_mutable_.array() = dtau_ * q_weight_.array() * (q_mutable_-q_ref_).array();
+  lv_mutable_.array() = dtau_ * v_weight_.array() * (v_mutable_-v_ref_).array();
+  lu_mutable_.array() = dtau_ * u_weight_.array() * (u_mutable_-u_ref_).array();
+}
+
+
+void StageCost::InitVariableDependedQuantities(const VariablesPtr& x_init) {
 }
 
 } // namespace pinipopt

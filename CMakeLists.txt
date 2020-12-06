@@ -17,6 +17,9 @@ find_package(Boost COMPONENTS system filesystem REQUIRED)
 find_package(pinocchio REQUIRED)
 # find ifopt
 find_package(ifopt REQUIRED)
+# find ifopt
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(IPOPT REQUIRED ipopt)
 
 # build pinipopt
 add_library(
@@ -36,12 +39,12 @@ add_library(
 target_link_libraries(
   ${PROJECT_NAME} 
   PUBLIC 
-  ifopt::ifopt_ipopt
-  ifopt::ifopt_core
   pthread
   ${Boost_LIBRARIES}
   ${PINOCCHIO_LIBRARIES}
   urdfdom_model
+  ${IFOPT_LIBRARIES}
+  ${IPOPT_LIBRARIES}
 )
 target_include_directories(
   ${PROJECT_NAME} 
@@ -49,6 +52,8 @@ target_include_directories(
   ${EIGEN3_INCLUDE_DIR}
   ${Boost_INCLUDE_DIR}
   ${PINOCCHIO_INCLUDE_DIRS}
+  ${IFOPT_INCLUDE_DIRS}
+  ${IPOPT_INCLUDE_DIRS}
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
