@@ -20,6 +20,27 @@ void OCP::solve(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0) {
 }
 
 
+void OCP::set_q(const Eigen::VectorXd& q) {
+  for (auto& e : q_) {
+    e->SetVariables(q);
+  }
+}
+
+
+void OCP::set_v(const Eigen::VectorXd& v) {
+  for (auto& e : v_) {
+    e->SetVariables(v);
+  }
+}
+
+
+void OCP::set_u(const Eigen::VectorXd& u) {
+  for (auto& e : u_) {
+    e->SetVariables(u);
+  }
+}
+
+
 void OCP::set_q_weight(const Eigen::VectorXd& q_weight) {
   for (auto& e : stage_costs_) {
     e->set_q_weight(q_weight);
@@ -76,14 +97,22 @@ void OCP::createOCP(const Robot& robot, const int N, const double dtau) {
 
 
 void OCP::createVariableSets(const Robot& robot, const int N, const double dtau) {
+  q_.clear();
+  v_.clear();
+  u_.clear();
   vars_.clear();
   for (int i=0; i<N; ++i) {
-    vars_.push_back(std::make_shared<Configuration>(robot, i));
-    vars_.push_back(std::make_shared<Velocity>(robot, i));
-    vars_.push_back(std::make_shared<Torques>(robot, i));
+    q_.push_back(std::make_shared<Configuration>(robot, i));
+    v_.push_back(std::make_shared<Velocity>(robot, i));
+    u_.push_back(std::make_shared<Torques>(robot, i));
+    vars_.push_back(q_[i]);
+    vars_.push_back(v_[i]);
+    vars_.push_back(u_[i]);
   }
-  vars_.push_back(std::make_shared<Configuration>(robot, N));
-  vars_.push_back(std::make_shared<Velocity>(robot, N));
+  q_.push_back(std::make_shared<Configuration>(robot, N));
+  v_.push_back(std::make_shared<Velocity>(robot, N));
+  vars_.push_back(q_[N]);
+  vars_.push_back(v_[N]);
 }
 
 

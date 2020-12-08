@@ -34,6 +34,12 @@ public:
 
   void solve(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0);
 
+  void set_q(const Eigen::VectorXd& q);
+
+  void set_v(const Eigen::VectorXd& v);
+
+  void set_u(const Eigen::VectorXd& u);
+
   void set_q_weight(const Eigen::VectorXd& q_weight);
 
   void set_v_weight(const Eigen::VectorXd& v_weight);
@@ -53,6 +59,9 @@ private:
   std::shared_ptr<InitialState> initial_state_constraint_;
   std::vector<std::shared_ptr<StageCost>> stage_costs_;
   std::shared_ptr<TerminalCost> terminal_cost_;
+  std::vector<std::shared_ptr<Configuration>> q_;
+  std::vector<std::shared_ptr<Velocity>> v_;
+  std::vector<std::shared_ptr<Torques>> u_;
   VariablePtrVec vars_;
   ConstraintPtrVec constraints_;
   CostPtrVec costs_;
