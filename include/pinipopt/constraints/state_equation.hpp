@@ -21,6 +21,10 @@ public:
   StateEquation(const Robot& robot, const double dtau, const int time_stage);
   virtual ~StateEquation() = default;
 
+  void computeValues() const override;
+
+  void computeJacobian() const override;
+
   Eigen::VectorXd GetValues() const override;
 
   ifopt::Composite::VecBound GetBounds() const override;
@@ -39,9 +43,9 @@ private:
 
   void setVariables() const;
 
-  void computeViolation() const;
+  // void computeViolation() const;
 
-  void computeJacobian() const;
+  // void computeJacobian() const;
 
   void InitVariableDependedQuantities(
       const ifopt::Composite::Ptr& x_init) override;

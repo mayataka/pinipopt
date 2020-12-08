@@ -25,9 +25,9 @@ public:
 
   void setInitialState(const Eigen::VectorXd& q0, const Eigen::VectorXd& v0);
 
-  void updateConstraint();
+  void computeValues() const override;
 
-  void updateJacobian();
+  void computeJacobian() const override;
 
   Eigen::VectorXd GetValues() const override;
 
@@ -45,9 +45,9 @@ private:
 
   void setVariables() const;
 
-  void computeViolation() const;
+  // void computeViolation() const;
 
-  void computeJacobian() const;
+  // void computeJacobian() const;
 
   void InitVariableDependedQuantities(
       const ifopt::Composite::Ptr& x_init) override;

@@ -9,6 +9,7 @@ find_package(ifopt REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(IPOPT REQUIRED ipopt)
 pkg_check_modules(COINHSL REQUIRED coinhsl)
+# pkg_check_modules(COINMUMPS REQUIRED coinmumps)
 
 link_directories(
   /usr/local/lib
@@ -25,6 +26,7 @@ target_link_libraries(
   ifopt::ifopt_ipopt
   ${IPOPT_LIBRARIES}
   ${COINHSL_LIBRARIES}
+  # ${COINMUMPS_LIBRARIES}
 )
 target_include_directories(
   iiwa14
@@ -32,10 +34,3 @@ target_include_directories(
   ${IPOPT_INCLUDE_DIRS}
   ${PINIPOPT_INCLUDE_DIRS}
 )
-
-message(STATUS "*** dump start cmake variables ***")
-get_cmake_property(_variableNames VARIABLES)
-foreach(_variableName ${_variableNames})
-        message(STATUS "${_variableName}=${${_variableName}}")
-endforeach()
-message(STATUS "*** dump end ***")

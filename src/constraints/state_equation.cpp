@@ -28,9 +28,25 @@ StateEquation::StateEquation(const Robot& robot, const double dtau,
 }
 
 
-Eigen::VectorXd StateEquation::GetValues() const {
+void StateEquation::computeValues() const {
   setVariables();
-  computeViolation();
+  robot_mutable_.stateEquation(q_mutable_, v_mutable_, u_mutable_, 
+                               dq_mutable_, dv_mutable_);
+  const int dimv = robot_mutable_.dimv();
+  dx_mutable_.head(dimv) = q_mutable_ + dtau_ * dq_mutable_ - q_next_mutable_;
+  dx_mutable_.tail(dimv) = v_mutable_ + dtau_ * dv_mutable_ - v_next_mutable_;
+}
+
+
+void StateEquation::computeJacobian() const {
+  setVariables();
+  robot_mutable_.ABADerivatives(q_mutable_, v_mutable_, u_mutable_, 
+                                dABA_dq_mutable_, dABA_dv_mutable_, 
+                                dABA_du_mutable_);
+}
+
+
+Eigen::VectorXd StateEquation::GetValues() const {
   return dx_mutable_;
 }
 
@@ -46,8 +62,6 @@ ifopt::Composite::VecBound StateEquation::GetBounds() const {
 
 void StateEquation::FillJacobianBlock(
     std::string var_set, ifopt::Component::Jacobian& jac_block) const {
-  setVariables();
-  computeJacobian();
   const int dimv = robot_mutable_.dimv();
   const int dimu = robot_mutable_.dimu();
   if (var_set == q_str_) {
@@ -100,20 +114,12 @@ void StateEquation::setVariables() const {
 }
 
 
-void StateEquation::computeViolation() const {
-  robot_mutable_.stateEquation(q_mutable_, v_mutable_, u_mutable_, 
-                               dq_mutable_, dv_mutable_);
-  const int dimv = robot_mutable_.dimv();
-  dx_mutable_.head(dimv) = q_mutable_ + dtau_ * dq_mutable_ - q_next_mutable_;
-  dx_mutable_.tail(dimv) = v_mutable_ + dtau_ * dv_mutable_ - v_next_mutable_;
-}
+// void StateEquation::computeViolation() const {
+// }
 
 
-void StateEquation::computeJacobian() const {
-  robot_mutable_.ABADerivatives(q_mutable_, v_mutable_, u_mutable_, 
-                                dABA_dq_mutable_, dABA_dv_mutable_, 
-                                dABA_du_mutable_);
-}
+// void StateEquation::computeJacobian() const {
+// }
 
 
 void StateEquation::InitVariableDependedQuantities(

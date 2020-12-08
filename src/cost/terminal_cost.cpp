@@ -15,7 +15,8 @@ TerminalCost::TerminalCost(const Robot& robot, const int N)
     q_mutable_(Eigen::VectorXd::Zero(robot.dimq())),
     v_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
     lq_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
-    lv_mutable_(Eigen::VectorXd::Zero(robot.dimv())) {
+    lv_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
+    cost_mutable_(0) {
 }
 
 
@@ -43,16 +44,33 @@ void TerminalCost::set_v_weight(const Eigen::VectorXd& v_weight) {
 }
 
 
-double TerminalCost::GetCost() const {
+void TerminalCost::computeValues() const {
   setVariables();
-  return computeCost();
+  cost_mutable_ = 0;
+  cost_mutable_ += 0.5 * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
+  cost_mutable_ += 0.5 * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
+}
+
+
+void TerminalCost::computeJacobian() const {
+  setVariables();
+  lq_mutable_.array() = q_weight_.array() * (q_mutable_-q_ref_).array();
+  lv_mutable_.array() = v_weight_.array() * (v_mutable_-v_ref_).array();
+}
+
+
+
+double TerminalCost::GetCost() const {
+  // setVariables();
+  // return computeCost();
+  return cost_mutable_;
 }
 
 
 void TerminalCost::FillJacobianBlock(
     std::string var_set, ifopt::Component::Jacobian& jac_block) const {
-  setVariables();
-  computeJacobian();
+  // setVariables();
+  // computeJacobian();
   if (var_set == q_str_) {
     for (int i=0; i<dimv_; ++i) {
       jac_block.coeffRef(0, i) = lq_mutable_.coeff(i);
@@ -72,18 +90,18 @@ void TerminalCost::setVariables() const {
 }
 
 
-double TerminalCost::computeCost() const {
-  double cost = 0;
-  cost += 0.5 * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
-  cost += 0.5 * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
-  return cost;
-}
+// double TerminalCost::computeCost() const {
+//   double cost = 0;
+//   cost += 0.5 * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
+//   cost += 0.5 * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
+//   return cost;
+// }
 
 
-void TerminalCost::computeJacobian() const {
-  lq_mutable_.array() = q_weight_.array() * (q_mutable_-q_ref_).array();
-  lv_mutable_.array() = v_weight_.array() * (v_mutable_-v_ref_).array();
-}
+// void TerminalCost::computeJacobian() const {
+//   lq_mutable_.array() = q_weight_.array() * (q_mutable_-q_ref_).array();
+//   lv_mutable_.array() = v_weight_.array() * (v_mutable_-v_ref_).array();
+// }
 
 
 void TerminalCost::InitVariableDependedQuantities(const VariablesPtr& x_init) {

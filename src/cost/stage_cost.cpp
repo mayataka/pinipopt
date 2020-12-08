@@ -23,7 +23,8 @@ StageCost::StageCost(const Robot& robot, const double dtau,
     u_mutable_(Eigen::VectorXd::Zero(robot.dimu())),
     lq_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
     lv_mutable_(Eigen::VectorXd::Zero(robot.dimv())),
-    lu_mutable_(Eigen::VectorXd::Zero(robot.dimu())) {
+    lu_mutable_(Eigen::VectorXd::Zero(robot.dimu())),
+    cost_mutable_(0) {
 }
 
 
@@ -63,16 +64,30 @@ void StageCost::set_u_weight(const Eigen::VectorXd& u_weight) {
 }
 
 
-double StageCost::GetCost() const {
+void StageCost::computeValues() const {
   setVariables();
-  return computeCost();
+  cost_mutable_ = 0;
+  cost_mutable_ += 0.5 * dtau_ * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
+  cost_mutable_ += 0.5 * dtau_ * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
+  cost_mutable_ += 0.5 * dtau_ * (u_weight_.array() * (u_mutable_-u_ref_).array() * (u_mutable_-u_ref_).array()).sum();
+}
+
+
+void StageCost::computeJacobian() const {
+  setVariables();
+  lq_mutable_.array() = dtau_ * q_weight_.array() * (q_mutable_-q_ref_).array();
+  lv_mutable_.array() = dtau_ * v_weight_.array() * (v_mutable_-v_ref_).array();
+  lu_mutable_.array() = dtau_ * u_weight_.array() * (u_mutable_-u_ref_).array();
+}
+
+
+double StageCost::GetCost() const {
+  return cost_mutable_;
 }
 
 
 void StageCost::FillJacobianBlock(
     std::string var_set, ifopt::Component::Jacobian& jac_block) const {
-  setVariables();
-  computeJacobian();
   if (var_set == q_str_) {
     for (int i=0; i<dimv_; ++i) {
       jac_block.coeffRef(0, i) = lq_mutable_.coeff(i);
@@ -96,22 +111,6 @@ void StageCost::setVariables() const {
   q_mutable_ = GetVariables()->GetComponent(q_str_)->GetValues();
   v_mutable_ = GetVariables()->GetComponent(v_str_)->GetValues();
   u_mutable_ = GetVariables()->GetComponent(u_str_)->GetValues();
-}
-
-
-double StageCost::computeCost() const {
-  double cost = 0;
-  cost += 0.5 * dtau_ * (q_weight_.array() * (q_mutable_-q_ref_).array() * (q_mutable_-q_ref_).array()).sum();
-  cost += 0.5 * dtau_ * (v_weight_.array() * (v_mutable_-v_ref_).array() * (v_mutable_-v_ref_).array()).sum();
-  cost += 0.5 * dtau_ * (u_weight_.array() * (u_mutable_-u_ref_).array() * (u_mutable_-u_ref_).array()).sum();
-  return cost;
-}
-
-
-void StageCost::computeJacobian() const {
-  lq_mutable_.array() = dtau_ * q_weight_.array() * (q_mutable_-q_ref_).array();
-  lv_mutable_.array() = dtau_ * v_weight_.array() * (v_mutable_-v_ref_).array();
-  lu_mutable_.array() = dtau_ * u_weight_.array() * (u_mutable_-u_ref_).array();
 }
 
 

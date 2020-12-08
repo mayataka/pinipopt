@@ -42,9 +42,18 @@ void InitialState::setInitialState(const Eigen::VectorXd& q0,
 }
 
 
-Eigen::VectorXd InitialState::GetValues() const {
+void InitialState::computeValues() const {
   setVariables();
-  computeViolation();
+  dx_mutable_.head(dimv_) = q_mutable_ - q0_;
+  dx_mutable_.tail(dimv_) = v_mutable_ - v0_;
+}
+
+
+void InitialState::computeJacobian() const {
+}
+
+
+Eigen::VectorXd InitialState::GetValues() const {
   return dx_mutable_;
 }
 
@@ -60,8 +69,6 @@ ifopt::Composite::VecBound InitialState::GetBounds() const {
 
 void InitialState::FillJacobianBlock(
     std::string var_set, ifopt::Component::Jacobian& jac_block) const {
-  setVariables();
-  computeJacobian();
   if (var_set == q_str_) {
     for (int i=0; i<dimv_; ++i) {
       jac_block.coeffRef(i, i) = 1;
@@ -81,14 +88,12 @@ void InitialState::setVariables() const {
 }
 
 
-void InitialState::computeViolation() const {
-  dx_mutable_.head(dimv_) = q_mutable_ - q0_;
-  dx_mutable_.tail(dimv_) = v_mutable_ - v0_;
-}
+// void InitialState::computeViolation() const {
+// }
 
 
-void InitialState::computeJacobian() const {
-}
+// void InitialState::computeJacobian() const {
+// }
 
 
 void InitialState::InitVariableDependedQuantities(

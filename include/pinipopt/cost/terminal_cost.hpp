@@ -28,6 +28,10 @@ public:
 
   void set_v_weight(const Eigen::VectorXd& v_weight);
 
+  void computeValues() const override;
+
+  void computeJacobian() const override;
+
   double GetCost() const override;
 
   void FillJacobianBlock(std::string var_set, 
@@ -38,12 +42,13 @@ private:
   std::string q_str_, v_str_;
   Eigen::VectorXd q_ref_, v_ref_, q_weight_, v_weight_;
   mutable Eigen::VectorXd q_mutable_, v_mutable_, lq_mutable_, lv_mutable_;
+  mutable double cost_mutable_;
 
   void setVariables() const;
 
-  double computeCost() const;
+  // double computeCost() const;
 
-  void computeJacobian() const;
+  // void computeJacobian() const;
 
   void InitVariableDependedQuantities(const VariablesPtr& x_init) override; 
 

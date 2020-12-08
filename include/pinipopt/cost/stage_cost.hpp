@@ -35,9 +35,9 @@ public:
 
   void setVariables();
 
-  void updateCost();
+  void computeValues() const override;
 
-  void updateJacobian();
+  void computeJacobian() const override;
 
   double GetCost() const override;
 
@@ -45,7 +45,7 @@ public:
                          ifopt::Component::Jacobian& jac_block) const override;
 
 private:
-  double dtau_, cost_;
+  double dtau_;
   int dimv_, dimu_;
   std::string q_str_, v_str_, u_str_;
   std::shared_ptr<Configuration> q_ptr_;
@@ -54,12 +54,14 @@ private:
   Eigen::VectorXd q_ref_, v_ref_, u_ref_, q_weight_, v_weight_, u_weight_;
   mutable Eigen::VectorXd q_mutable_, v_mutable_, u_mutable_, 
                           lq_mutable_, lv_mutable_, lu_mutable_;
+  mutable double cost_mutable_;
+
 
   void setVariables() const;
 
-  double computeCost() const;
+  // double computeCost() const;
 
-  void computeJacobian() const;
+  // void computeJacobian() const;
 
   void InitVariableDependedQuantities(const VariablesPtr& x_init) override; 
 
